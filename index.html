@@ -451,33 +451,141 @@
         let customerLocation = localStorage.getItem('estetica_customerLocation') || "";
 
         const defaultServicesData = {
-            damas: [
-                { id: 1, name: "Corte Bob Clásico", price: "$350", img: "https://file.garden/Z8NltLNFC1q_3W8R/Cortes/Bob%20Clasico.jpg", badge: "Popular" },
-                { id: 2, name: "Corte en Capas", price: "$400", img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&h=600&fit=crop", badge: "" },
-                { id: 3, name: "Corte Pixie Moderno", price: "$450", img: "https://file.garden/Z8NltLNFC1q_3W8R/Cortes/Bob%20Clasico1.jpg", badge: "Nuevo" },
-                { id: 4, name: "Corte con Ondas", price: "$380", img: "https://images.unsplash.com/photo-1620331311520-246422fd82f9?w=600&h=600&fit=crop", badge: "" },
-                { id: 5, name: "Corte Recto con Flequillo", price: "$320", img: "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&h=600&fit=crop", badge: "Promo" },
-                { id: 6, name: "Corte Asimétrico", price: "$420", img: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&h=600&fit=crop", badge: "" }
-            ],
-            caballeros: [
-                { id: 7, name: "Corte Clásico", price: "$250", img: "https://images.unsplash.com/photo-1599351431750-8c5e7f3c8f3e?w=600&h=600&fit=crop", badge: "Popular" },
-                { id: 8, name: "Degradado Fade", price: "$300", img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&h=600&fit=crop", badge: "Nuevo" },
-                { id: 9, name: "Corte con Navaja", price: "$350", img: "https://images.unsplash.com/photo-1503951914875-452162b7f3f1?w=600&h=600&fit=crop", badge: "" },
-                { id: 10, name: "Arreglo de Barba", price: "$150", img: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&h=600&fit=crop", badge: "Promo" }
-            ],
-            color: [
-                { id: 11, name: "Tinte Completo", price: "$600", img: "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&h=600&fit=crop", badge: "Popular" },
-                { id: 12, name: "Mechas Balayage", price: "$1,200", img: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=600&h=600&fit=crop", badge: "" },
-                { id: 13, name: "Baño de Color", price: "$450", img: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=600&h=600&fit=crop", badge: "Promo" },
-                { id: 14, name: "Corrección de Color", price: "$1,500", img: "https://images.unsplash.com/photo-1605735789129-2e3c8c8f5f8e?w=600&h=600&fit=crop", badge: "Nuevo" }
-            ],
-            tratamientos: [
-                { id: 15, name: "Hidratación Profunda", price: "$400", img: "https://images.unsplash.com/photo-1570172619644-dfd22f7f6b0f?w=600&h=600&fit=crop", badge: "Popular" },
-                { id: 16, name: "Keratina", price: "$900", img: "https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=600&h=600&fit=crop", badge: "" },
-                { id: 17, name: "Botox Capilar", price: "$750", img: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&h=600&fit=crop", badge: "Nuevo" },
-                { id: 18, name: "Spa Capilar", price: "$500", img: "https://images.unsplash.com/photo-1576426863848-c21f53c60b6b?w=600&h=600&fit=crop", badge: "Promo" }
-            ]
-        };
+    "damas": [
+        {
+            "id": 1,
+            "name": "Corte Bob Clásico",
+            "price": "$85",
+            "img": "https://file.garden/Z8NltLNFC1q_3W8R/Cortes/Bob%20Clasico.jpg",
+            "badge": "Popular"
+        },
+        {
+            "id": 2,
+            "name": "Corte en Capas",
+            "price": "$80",
+            "img": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&h=600&fit=crop",
+            "badge": ""
+        },
+        {
+            "id": 3,
+            "name": "Corte Pixie Moderno",
+            "price": "$95",
+            "img": "https://file.garden/Z8NltLNFC1q_3W8R/Cortes/Bob%20Clasico1.jpg",
+            "badge": "Nuevo"
+        },
+        {
+            "id": 4,
+            "name": "Corte con Ondas",
+            "price": "$80",
+            "img": "https://images.unsplash.com/photo-1620331311520-246422fd82f9?w=600&h=600&fit=crop",
+            "badge": ""
+        },
+        {
+            "id": 5,
+            "name": "Corte Recto con Flequillo",
+            "price": "$120",
+            "img": "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&h=600&fit=crop",
+            "badge": "Promo"
+        },
+        {
+            "id": 6,
+            "name": "Corte Asimétrico",
+            "price": "$120",
+            "img": "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&h=600&fit=crop",
+            "badge": ""
+        }
+    ],
+    "caballeros": [
+        {
+            "id": 7,
+            "name": "Corte Clásico",
+            "price": "$250",
+            "img": "https://images.unsplash.com/photo-1599351431750-8c5e7f3c8f3e?w=600&h=600&fit=crop",
+            "badge": "Popular"
+        },
+        {
+            "id": 8,
+            "name": "Degradado Fade",
+            "price": "$300",
+            "img": "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&h=600&fit=crop",
+            "badge": "Nuevo"
+        },
+        {
+            "id": 9,
+            "name": "Corte con Navaja",
+            "price": "$350",
+            "img": "https://images.unsplash.com/photo-1503951914875-452162b7f3f1?w=600&h=600&fit=crop",
+            "badge": ""
+        },
+        {
+            "id": 10,
+            "name": "Arreglo de Barba",
+            "price": "$150",
+            "img": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&h=600&fit=crop",
+            "badge": "Promo"
+        }
+    ],
+    "color": [
+        {
+            "id": 11,
+            "name": "Tinte Completo",
+            "price": "$600",
+            "img": "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&h=600&fit=crop",
+            "badge": "Popular"
+        },
+        {
+            "id": 12,
+            "name": "Mechas Balayage",
+            "price": "$1,200",
+            "img": "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=600&h=600&fit=crop",
+            "badge": ""
+        },
+        {
+            "id": 13,
+            "name": "Baño de Color",
+            "price": "$450",
+            "img": "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=600&h=600&fit=crop",
+            "badge": "Promo"
+        },
+        {
+            "id": 14,
+            "name": "Corrección de Color",
+            "price": "$1,500",
+            "img": "https://images.unsplash.com/photo-1605735789129-2e3c8c8f5f8e?w=600&h=600&fit=crop",
+            "badge": "Nuevo"
+        }
+    ],
+    "tratamientos": [
+        {
+            "id": 15,
+            "name": "Hidratación Profunda",
+            "price": "$400",
+            "img": "https://images.unsplash.com/photo-1570172619644-dfd22f7f6b0f?w=600&h=600&fit=crop",
+            "badge": "Popular"
+        },
+        {
+            "id": 16,
+            "name": "Keratina",
+            "price": "$900",
+            "img": "https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=600&h=600&fit=crop",
+            "badge": ""
+        },
+        {
+            "id": 17,
+            "name": "Botox Capilar",
+            "price": "$750",
+            "img": "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&h=600&fit=crop",
+            "badge": "Nuevo"
+        },
+        {
+            "id": 18,
+            "name": "Spa Capilar",
+            "price": "$500",
+            "img": "https://images.unsplash.com/photo-1576426863848-c21f53c60b6b?w=600&h=600&fit=crop",
+            "badge": "Promo"
+        }
+    ]
+};
 
         let servicesData = JSON.parse(localStorage.getItem('estetica_catalog_data')) || JSON.parse(JSON.stringify(defaultServicesData));
 
