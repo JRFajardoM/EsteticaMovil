@@ -300,6 +300,30 @@
             font-weight: 600;
         }
         .admin-tab-btn.active { background: var(--primary); color: white; }
+
+        /* Pantalla de Login */
+        #loginOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 3000;
+            justify-content: center; align-items: center;
+        }
+        .login-card {
+            background: white; padding: 2rem; border-radius: 20px;
+            width: 90%; max-width: 400px; text-align: center;
+        }
+        .login-card input {
+            width: 100%; padding: 0.8rem; margin: 0.5rem 0;
+            border: 2px solid #ddd; border-radius: 10px;
+        }
+        .login-card button {
+            width: 100%; padding: 1rem; margin-top: 1rem;
+            background: var(--gradient); color: white;
+            border: none; border-radius: 10px; cursor: pointer;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -419,12 +443,16 @@
         <div class="admin-content">
             <div class="admin-header">
                 <h2 style="color: var(--primary); font-family: 'Playfair Display', serif;">Panel de Control - Catálogo</h2>
-                <button onclick="toggleAdminPanel()" class="category-btn" style="background: var(--secondary);">
-                    <i class="fas fa-times"></i> Cerrar
-                </button>
+                <div> <!-- Contenedor para los botones de control -->
+                    <button onclick="toggleAdminPanel()" class="category-btn" style="background: var(--secondary);">
+                        <i class="fas fa-times"></i> Cerrar
+                    </button>
+                    <button onclick="logoutAdmin()" class="category-btn" style="background: #333; margin-left: 0.5rem;">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                </div>
             </div>
-
-            <div class="admin-tab-container">
+            <div class="admin-tab-container"> <!-- Contenedor para las pestañas de categoría -->
                 <button onclick="switchAdminTab('damas')" class="admin-tab-btn active" data-tab="damas">Damas</button>
                 <button onclick="switchAdminTab('caballeros')" class="admin-tab-btn" data-tab="caballeros">Caballeros</button>
                 <button onclick="switchAdminTab('color')" class="admin-tab-btn" data-tab="color">Color</button>
@@ -443,151 +471,81 @@
                     <i class="fas fa-undo"></i> Restaurar Original
                 </button>
             </div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <button onclick="exportDataForGithub()" class="category-btn" style="background: #24292e; width: 100%; max-width: 400px;">
+                    <i class="fab fa-github"></i> Generar Código para GitHub
+                </button>
+            </div>
         </div>
     </div>
 
+    <!-- Overlay de Login -->
+    <div id="loginOverlay">
+        <div class="login-card">
+            <h2 style="margin-bottom: 1.5rem; font-family: 'Playfair Display', serif;">Acceso Administrativo</h2>
+            <input type="email" id="loginEmail" placeholder="Tu correo electrónico">
+            <input type="password" id="loginPassword" placeholder="Tu contraseña">
+            <button onclick="loginAdmin()">Entrar al Panel</button>
+            <button onclick="document.getElementById('loginOverlay').style.display='none'" style="background: #666; margin-top: 0.5rem;">Cancelar</button>
+            <p id="loginError" style="color: red; font-size: 0.8rem; margin-top: 1rem; display: none;"></p>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+
     <script>
+        // CONFIGURACIÓN DE FIREBASE (Reemplaza con tus datos de la consola)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmNCoFaxOy1bR6MZkYJ5jsOFbPK9LjwB8",
+            authDomain: "esteticamovil.firebaseapp.com",
+            projectId: "esteticamovil",
+            storageBucket: "esteticamovil.firebasestorage.app",
+            messagingSenderId: "854999112823",
+            appId: "1:854999112823:web:0f3cd6602652ddc344fa72"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const catalogRef = db.collection('config').doc('catalog');
+
         const phoneNumber = "526632216864";
         let customerLocation = localStorage.getItem('estetica_customerLocation') || "";
 
         const defaultServicesData = {
-    "damas": [
-        {
-            "id": 1,
-            "name": "Corte Bob Clásico",
-            "price": "$85",
-            "img": "https://file.garden/Z8NltLNFC1q_3W8R/Cortes/Bob%20Clasico.jpg",
-            "badge": "Popular"
-        },
-        {
-            "id": 2,
-            "name": "Corte en Capas",
-            "price": "$80",
-            "img": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&h=600&fit=crop",
-            "badge": ""
-        },
-        {
-            "id": 3,
-            "name": "Corte Pixie Moderno",
-            "price": "$95",
-            "img": "https://file.garden/Z8NltLNFC1q_3W8R/Cortes/Bob%20Clasico1.jpg",
-            "badge": "Nuevo"
-        },
-        {
-            "id": 4,
-            "name": "Corte con Ondas",
-            "price": "$80",
-            "img": "https://images.unsplash.com/photo-1620331311520-246422fd82f9?w=600&h=600&fit=crop",
-            "badge": ""
-        },
-        {
-            "id": 5,
-            "name": "Corte Recto con Flequillo",
-            "price": "$120",
-            "img": "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&h=600&fit=crop",
-            "badge": "Promo"
-        },
-        {
-            "id": 6,
-            "name": "Corte Asimétrico",
-            "price": "$120",
-            "img": "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&h=600&fit=crop",
-            "badge": ""
-        }
-    ],
-    "caballeros": [
-        {
-            "id": 7,
-            "name": "Corte Clásico",
-            "price": "$250",
-            "img": "https://images.unsplash.com/photo-1599351431750-8c5e7f3c8f3e?w=600&h=600&fit=crop",
-            "badge": "Popular"
-        },
-        {
-            "id": 8,
-            "name": "Degradado Fade",
-            "price": "$300",
-            "img": "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&h=600&fit=crop",
-            "badge": "Nuevo"
-        },
-        {
-            "id": 9,
-            "name": "Corte con Navaja",
-            "price": "$350",
-            "img": "https://images.unsplash.com/photo-1503951914875-452162b7f3f1?w=600&h=600&fit=crop",
-            "badge": ""
-        },
-        {
-            "id": 10,
-            "name": "Arreglo de Barba",
-            "price": "$150",
-            "img": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&h=600&fit=crop",
-            "badge": "Promo"
-        }
-    ],
-    "color": [
-        {
-            "id": 11,
-            "name": "Tinte Completo",
-            "price": "$600",
-            "img": "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&h=600&fit=crop",
-            "badge": "Popular"
-        },
-        {
-            "id": 12,
-            "name": "Mechas Balayage",
-            "price": "$1,200",
-            "img": "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=600&h=600&fit=crop",
-            "badge": ""
-        },
-        {
-            "id": 13,
-            "name": "Baño de Color",
-            "price": "$450",
-            "img": "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=600&h=600&fit=crop",
-            "badge": "Promo"
-        },
-        {
-            "id": 14,
-            "name": "Corrección de Color",
-            "price": "$1,500",
-            "img": "https://images.unsplash.com/photo-1605735789129-2e3c8c8f5f8e?w=600&h=600&fit=crop",
-            "badge": "Nuevo"
-        }
-    ],
-    "tratamientos": [
-        {
-            "id": 15,
-            "name": "Hidratación Profunda",
-            "price": "$400",
-            "img": "https://images.unsplash.com/photo-1570172619644-dfd22f7f6b0f?w=600&h=600&fit=crop",
-            "badge": "Popular"
-        },
-        {
-            "id": 16,
-            "name": "Keratina",
-            "price": "$900",
-            "img": "https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=600&h=600&fit=crop",
-            "badge": ""
-        },
-        {
-            "id": 17,
-            "name": "Botox Capilar",
-            "price": "$750",
-            "img": "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&h=600&fit=crop",
-            "badge": "Nuevo"
-        },
-        {
-            "id": 18,
-            "name": "Spa Capilar",
-            "price": "$500",
-            "img": "https://images.unsplash.com/photo-1576426863848-c21f53c60b6b?w=600&h=600&fit=crop",
-            "badge": "Promo"
-        }
-    ]
-};
+            damas: [
+                { id: 1, name: "Corte Bob Clásico", price: "$350", img: "https://file.garden/Z8NltLNFC1q_3W8R/Cortes/Bob%20Clasico.jpg", badge: "Popular" },
+                { id: 2, name: "Corte en Capas", price: "$400", img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&h=600&fit=crop", badge: "" },
+                { id: 3, name: "Corte Pixie Moderno", price: "$450", img: "https://file.garden/Z8NltLNFC1q_3W8R/Cortes/Bob%20Clasico1.jpg", badge: "Nuevo" },
+                { id: 4, name: "Corte con Ondas", price: "$380", img: "https://images.unsplash.com/photo-1620331311520-246422fd82f9?w=600&h=600&fit=crop", badge: "" },
+                { id: 5, name: "Corte Recto con Flequillo", price: "$320", img: "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&h=600&fit=crop", badge: "Promo" },
+                { id: 6, name: "Corte Asimétrico", price: "$420", img: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&h=600&fit=crop", badge: "" }
+            ],
+            caballeros: [
+                { id: 7, name: "Corte Clásico", price: "$250", img: "https://images.unsplash.com/photo-1599351431750-8c5e7f3c8f3e?w=600&h=600&fit=crop", badge: "Popular" },
+                { id: 8, name: "Degradado Fade", price: "$300", img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&h=600&fit=crop", badge: "Nuevo" },
+                { id: 9, name: "Corte con Navaja", price: "$350", img: "https://images.unsplash.com/photo-1503951914875-452162b7f3f1?w=600&h=600&fit=crop", badge: "" },
+                { id: 10, name: "Arreglo de Barba", price: "$150", img: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&h=600&fit=crop", badge: "Promo" }
+            ],
+            color: [
+                { id: 11, name: "Tinte Completo", price: "$600", img: "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&h=600&fit=crop", badge: "Popular" },
+                { id: 12, name: "Mechas Balayage", price: "$1,200", img: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=600&h=600&fit=crop", badge: "" },
+                { id: 13, name: "Baño de Color", price: "$450", img: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=600&h=600&fit=crop", badge: "Promo" },
+                { id: 14, name: "Corrección de Color", price: "$1,500", img: "https://images.unsplash.com/photo-1605735789129-2e3c8c8f5f8e?w=600&h=600&fit=crop", badge: "Nuevo" }
+            ],
+            tratamientos: [
+                { id: 15, name: "Hidratación Profunda", price: "$400", img: "https://images.unsplash.com/photo-1570172619644-dfd22f7f6b0f?w=600&h=600&fit=crop", badge: "Popular" },
+                { id: 16, name: "Keratina", price: "$900", img: "https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=600&h=600&fit=crop", badge: "" },
+                { id: 17, name: "Botox Capilar", price: "$750", img: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&h=600&fit=crop", badge: "Nuevo" },
+                { id: 18, name: "Spa Capilar", price: "$500", img: "https://images.unsplash.com/photo-1576426863848-c21f53c60b6b?w=600&h=600&fit=crop", badge: "Promo" }
+            ]
+        };
 
-        let servicesData = JSON.parse(localStorage.getItem('estetica_catalog_data')) || JSON.parse(JSON.stringify(defaultServicesData));
+        let servicesData = JSON.parse(JSON.stringify(defaultServicesData));
 
         const categoryTitles = {
             damas: "Catálogo de Cortes para Damas",
@@ -694,10 +652,46 @@
         function handleLogoClick() {
             logoClicks++;
             if(logoClicks === 3) {
-                toggleAdminPanel();
+                if (auth.currentUser) {
+                    toggleAdminPanel();
+                } else {
+                    document.getElementById('loginOverlay').style.display = 'flex';
+                }
                 logoClicks = 0;
             }
             setTimeout(() => { logoClicks = 0; }, 2000);
+        }
+
+        function loginAdmin() {
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            const errorMsg = document.getElementById('loginError');
+
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => {
+                    document.getElementById('loginOverlay').style.display = 'none';
+                    errorMsg.style.display = 'none';
+                    toggleAdminPanel();
+                })
+                .catch((error) => {
+                    errorMsg.textContent = "Error: Datos incorrectos o sin permisos.";
+                    errorMsg.style.display = 'block';
+                    console.error(error);
+                });
+        }
+
+        // Escuchar si el usuario ya está conectado
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                console.log("Sesión activa:", user.email);
+            } else {
+                console.log("Sesión cerrada");
+                document.getElementById('adminPanel').style.display = 'none';
+            }
+        });
+
+        function logoutAdmin() {
+            auth.signOut().then(() => location.reload());
         }
 
         function toggleAdminPanel() {
@@ -751,8 +745,18 @@
             renderCategory(currentCategory);
         }
 
-        function saveData() {
+        async function saveData() {
+            if (!auth.currentUser) {
+                alert("Debes iniciar sesión para guardar cambios.");
+                return;
+            }
+
             localStorage.setItem('estetica_catalog_data', JSON.stringify(servicesData));
+            try {
+                await catalogRef.set(servicesData);
+            } catch (error) {
+                console.error("Error al sincronizar con Firebase:", error);
+            }
         }
 
         function addNewService() {
@@ -778,11 +782,49 @@
             }
         }
 
+        function exportDataForGithub() {
+            const dataString = JSON.stringify(servicesData, null, 4);
+            const codeTemplate = `const defaultServicesData = ${dataString};`;
+            
+            // Crear un área de texto temporal para copiar
+            const el = document.createElement('textarea');
+            el.value = codeTemplate;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            alert("¡Código generado y copiado al portapapeles!\n\nPara actualizar el sitio global:\n1. Ve a GitHub.\n2. Edita este archivo.\n3. Busca la línea 'const defaultServicesData = ...'.\n4. Reemplázala pegando el nuevo código.\n5. Guarda los cambios (Commit).");
+            
+            console.log("Copia este código y reemplaza el bloque defaultServicesData en tu archivo:");
+            console.log(codeTemplate);
+        }
+
         function resetToDefault() {
             if(confirm("¿Restaurar todo el catálogo original? Se perderán tus cambios personalizados.")) {
-                localStorage.removeItem('estetica_catalog_data');
-                location.reload();
+                catalogRef.delete().then(() => {
+                    localStorage.removeItem('estetica_catalog_data');
+                    location.reload();
+                }).catch(err => {
+                    console.error("Error al resetear datos:", err);
+                });
             }
+        }
+
+        async function loadData() {
+            try {
+                const doc = await catalogRef.get();
+                if (doc.exists) {
+                    servicesData = doc.data();
+                    console.log("Datos cargados desde Firebase");
+                } else {
+                    console.log("No hay datos en Firebase, usando locales.");
+                    await saveData(); // Inicializar Firebase con los datos por defecto
+                }
+            } catch (error) {
+                console.error("Error al cargar de Firebase:", error);
+            }
+            renderCategory('damas');
         }
 
         document.addEventListener('click', (e) => {
@@ -795,7 +837,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             customerLocation = localStorage.getItem('estetica_customerLocation') || "";
-            renderCategory('damas');
+            loadData();
         });
     </script>
 </body>
