@@ -570,14 +570,8 @@
                             <img src="${service.img}" alt="${service.name}" class="card-image" loading="lazy">
                         </div>
                         <div class="card-content">
-                            <div class="editable-field">
-                                <label><i class="fas fa-tag"></i> Nombre del Servicio</label>
-                                <input type="text" class="editable-input" value="${service.name}" onchange="updateLiveItem('${category}', ${index}, 'name', this.value)">
-                            </div>
-                            <div class="editable-field">
-                                <label><i class="fas fa-dollar-sign"></i> Precio</label>
-                                <input type="text" class="editable-input price-tag" value="${service.price}" onchange="updateLiveItem('${category}', ${index}, 'price', this.value)">
-                            </div>
+                            <h3 style="margin-bottom: 0.5rem; color: var(--dark); font-family: 'Playfair Display', serif;">${service.name}</h3>
+                            <div class="price-tag">${service.price}</div>
                             <button class="whatsapp-btn" onclick="sendWhatsApp(this, '${service.name}', '${service.price}')">
                                 <i class="fab fa-whatsapp"></i> Agendar por WhatsApp
                             </button>
@@ -595,12 +589,7 @@
             renderCategory(category);
         }
 
-        function sendWhatsApp(btn, defaultName, defaultPrice) {
-            const card = btn.closest('.service-card');
-            const nombreInput = card.querySelector('.editable-input:not(.price-tag)');
-            const precioInput = card.querySelector('.price-tag');
-            const serviceName = nombreInput ? nombreInput.value : defaultName;
-            const price = precioInput ? precioInput.value : defaultPrice;
+        function sendWhatsApp(btn, serviceName, price) {
 
             const locationText = customerLocation 
                 ? (customerLocation.startsWith('http') ? `📍 Ubicación GPS: ${customerLocation}` : `📍 Dirección: ${customerLocation}`)
